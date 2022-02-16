@@ -14,25 +14,55 @@ def fight(fighter : Character, enemies : list):
     
     print(f'fight is over! {fighter.name} won!')
 
+def new_fight(players: list, enemies : list):
+    participants = players + enemies # slå ihop alla deltagare i en lista
+    random.shuffle(participants)
+
+    for char in participants:
+        target = ""
+
+        # check if goblin or character
+        
+        if char in players:
+            target = random.choice(enemies)
+        else:
+            target = random.choice(players)
+            
+        target.take_damage(char.attack())    
+        if target.gethealth() == 0:
+            print(f"{char.get_name()} has killed {target.get_name()}")
+            if (type(target) == Goblin):
+                enemies.remove(target)
+            else:
+                players.remove(target)
+            participants.remove(target)
+        else:
+            print(f"{target.get_name()} was attacked by {char.get_name()}")
+            print(f"{target.get_name()} has {target.gethealth()} healthpoints left")
+
 
 def main():
+
+    players = []
 
     enemies = []
 
     nick = Character("Nick", 15, 3, 1)
     emy = Character("Emy", 20, 6, 5)
-
-
-    print(nick)
-    print()
-    print(emy)
+    players.append(nick)
+    players.append(emy)
 
     enemies.append(Goblin(1))
-    print("\nGoblins: ")
-    print(enemies[0])
+    enemies.append(Goblin(2))
 
+    # fight(emy, enemies)
 
-    fight(emy, enemies)
+    while not (len(enemies) == 0 or len(players) == 0):
+        new_fight(players, enemies)
+    if len(enemies) == 0:
+        print("The players won!")
+    elif len(players) == 0:
+        print("The goblins won!")
 
 if __name__ == "__main__":
     main()
