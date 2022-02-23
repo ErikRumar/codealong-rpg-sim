@@ -1,5 +1,6 @@
-from resources import Character, Goblin, save_character, load_characters
+from resources import Character, Goblin, save_character, load_characters, save_character, create_character
 import random
+import time
 
 def fight(fighter : Character, enemies : list):
 
@@ -19,16 +20,16 @@ def new_fight(players: list, enemies : list):
     random.shuffle(participants)
 
     for char in participants:
-        target = ""
+        # target = ""
 
         # check if goblin or character
         
         if char in players:
-            target = random.choice(enemies)
+            target = enemies[random.randint(0, len(enemies) - 1)]
         else:
-            target = random.choice(players)
+            target = players[random.randint(0, len(players) - 1)]
             
-        target.take_damage(char.attack())    
+        target.take_damage(char.attack())
         if target.gethealth() == 0:
             print(f"{char.get_name()} has killed {target.get_name()}")
             if (type(target) == Goblin):
@@ -38,30 +39,42 @@ def new_fight(players: list, enemies : list):
             participants.remove(target)
         else:
             print(f"{target.get_name()} was attacked by {char.get_name()}")
+            time.sleep(1)
             print(f"{target.get_name()} has {target.gethealth()} healthpoints left")
+            time.sleep(1)
         if len(enemies) == 0 or len(players) == 0: break
 
 
 def main():
 
-    players = []
-
+    players = load_characters()
     enemies = []
 
-    nick = Character("Nick", 15, 3, 1)
-    emy = Character("Emy", 20, 6, 5)
-    players.append(nick)
-    players.append(emy)
 
-    enemies.append(Goblin(1))
-    enemies.append(Goblin(2))
+    print("Would you like to create a new character? (y/n)")
+    new_char = input(": ")
+    if new_char.lower() == "y":
+        new = create_character()
+        players.append(new)
 
-    # fight(emy, enemies)
+
+    amount_of_goblins = int(input("How many goblins should they fight?: "))
+    for i in range(amount_of_goblins):
+        enemies.append(Goblin(i+1))
 
     while not (len(enemies) == 0 or len(players) == 0):
         new_fight(players, enemies)
     if len(enemies) == 0:
         print("The players won!")
+        print("Would you like to save the remaining characters? (y/n)")
+        while True:
+            save_progress = input(": ")
+            if save_progress.lower == "y":
+                save_character(players)
+            elif save_progress.lower() == "n":
+                break
+            else:
+                print("That was not a valid option")
     elif len(players) == 0:
         print("The goblins won!")
     # save_character(emy)

@@ -1,12 +1,20 @@
 #imports
 
-
+from random import randint, choice
 
 #globals
 
 
 
 #classes
+
+class Weapon:
+    def __init__(self, name, damage) -> None:
+        self.name = name
+        self.damage = damage
+
+    def return_damage(self):
+        return self.damage
 
 class Character:
 
@@ -18,7 +26,7 @@ class Character:
         
 
     def __str__(self):
-        return f'Name: {self.name}\nLevel: {(self.health + self.damage + self.armor)// 3}\nHealth: {self.health}\nDamage: {self.damage}\nArmor: {self.armor}'
+        return f'Name: {self.name}\nLevel: {((self.health) //2 + self.damage + self.armor)// 3}\nHealth: {self.health}\nDamage: {self.damage}\nArmor: {self.armor}'
 
 
     def take_damage(self, dmg):
@@ -48,14 +56,23 @@ class Character:
 
 class Goblin:
 
+
     def __init__(self, id):
         self.id = id
         self.health = 10
-        self.damage = 3
         self.armor = 2
+        self.give_weapon()
+        self.damage = self.weapon.return_damage()
 
     def __str__(self):
-        return f'ID: {self.id}\nLevel: {(self.health + self.damage + self.armor)// 3}\nHealth: {self.health}\nDamage: {self.damage}\nArmor: {self.armor}'
+        return f'ID: {self.id}\nLevel: {((self.health) //2 + self.damage + self.armor)// 3}\nHealth: {self.health}\nDamage: {self.damage}\nArmor: {self.armor}'
+
+    def give_weapon(self):
+        weapons = []
+        weapons.append(Weapon("Rusty Spear", 3))
+        weapons.append(Weapon("Rusty Cleaver", 2))
+        weapons.append(Weapon("Stone Axe", 1))
+        self.weapon = choice(weapons)
 
     def attack(self):
         return self.damage
@@ -80,7 +97,7 @@ def hello():
     print("hello world")
 
 
-def save_character(character : Character):
+def save_character(characters : list()):
     """
     Tar in karaktär, bryter ner dess attribut och sparar ner på fil.
     
@@ -88,11 +105,17 @@ def save_character(character : Character):
         character (Character: Det objekt som ska sparas ner på fil.
     """
 
-    name, health, damage, armor = character.get_all_attributes()
-    with open("character_file.txt", "w", encoding= "utf8") as f:
+    saved_characters = []
+
+    for character in characters:
+        name, health, damage, armor = character.get_all_attributes()
         save_string = f"{name}/{health}/{damage}/{armor}\n"
-        f.write(save_string)
-        print(f"{name} has been succesfully saved.")
+        saved_characters.append(save_string)
+
+    with open("character_file.txt", "w", encoding= "utf8") as f:
+        for char in saved_characters:
+            f.write(char)
+            print(f"Characters has been succesfully saved.")
 
 def load_characters():
     with open("character_file.txt", "r", encoding= "utf8") as f:
@@ -106,6 +129,22 @@ def load_characters():
             characters.append(this_char)
     print("Character has been loaded from file.")
     return characters
+
+
+def create_character():
+    # tänk på name, hp, attack, armor
+    print("Welcome to the character creation!")
+    print("What is your character called?")
+    name = input("Name: ")
+    health = randint(10, 25)
+    damage = randint(1, 6)
+    armor = randint(0, 5)
+
+
+    return_char = Character(name, health, damage, armor)
+    print("You have created the following character.")
+    print(return_char)
+    return return_char
 
 #main code
 
